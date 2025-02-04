@@ -7,9 +7,11 @@ variable "with_cloudfront" {
 }
 
 variable "cloudfront_aliases" {
-  type = list(string)
+  type    = list(string)
+  default = []
 }
 
 variable "acm_certificate_arn" {
-  type = string
+  type    = string
+  default = ""
 }
