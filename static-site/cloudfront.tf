@@ -1,15 +1,15 @@
-resource "aws_cloudfront_origin_access_identity" "s3_origin_identity" {
-  count = var.with_cloudfront ? 1 : 0
-}
-
 resource "aws_cloudfront_distribution" "s3_distribution" {
   count = var.with_cloudfront ? 1 : 0
+
   origin {
-    domain_name = aws_s3_bucket.website_bucket.bucket_regional_domain_name
+    domain_name = aws_s3_bucket_website_configuration.website_configuration.website_endpoint
     origin_id   = aws_s3_bucket.website_bucket.id
 
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.s3_origin_identity[0].cloudfront_access_identity_path
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
 
