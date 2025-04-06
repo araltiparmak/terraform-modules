@@ -15,3 +15,8 @@ variable "acm_certificate_arn" {
   type    = string
   default = ""
 }
+
+variable "error_document" {
+  type    = string
+  default = "error.html"
+}
