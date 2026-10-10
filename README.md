@@ -8,6 +8,23 @@ module "x" {
 }
 ```
 
+## Releases
+
+A commit on `main` creates a tag and a GitHub release only when its message
+contains a marker. With squash merges, put the marker in the pull request
+title or body:
+
+| Marker | Result (previous `v1.3.0`) |
+|---|---|
+| `[release patch]` | `v1.3.1` |
+| `[release minor]` | `v1.4.0` |
+| `[release major]` | `v2.0.0` |
+| `[release v1.5.0]` | `v1.5.0` |
+
+No marker, no release. Use `major` for breaking changes (renamed module,
+removed variable). The release notes are generated from the merged pull
+requests.
+
 ## Modules
 
 ### `static-site`
