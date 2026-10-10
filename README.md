@@ -12,7 +12,31 @@ module "x" {
 
 ### `static-site`
 
-S3 website bucket with an optional CloudFront distribution.
+S3 bucket with an optional CloudFront distribution. By default the bucket is a
+public S3 website (v1 behaviour). Two opt-in flags, both need
+`with_cloudfront = true`:
+
+- `private_bucket = true`: the bucket stays private and only CloudFront reads
+  it (OAC).
+- `spa_mode = true`: unknown paths (403/404) return `index.html` with status
+  200, so client-side routing (React, Vue, ...) survives a page refresh.
+
+```hcl
+module "app" {
+  source = "github.com/araltiparmak/terraform-modules//static-site?ref=v1.3.0"
+
+  domain_name         = "app.example.com"
+  with_cloudfront     = true
+  private_bucket      = true
+  spa_mode            = true
+  cloudfront_aliases  = ["app.example.com"]
+  acm_certificate_arn = aws_acm_certificate.app.arn # us-east-1
+}
+```
+
+Without `acm_certificate_arn` the default `*.cloudfront.net` certificate is
+used. Outputs: `url`, `bucket_name`, `bucket_arn`, `distribution_id`,
+`cloudfront_domain_name`.
 
 ### `github-oidc`
 
@@ -36,13 +60,7 @@ module "deploy_dev" {
   protection rules. The role is then usable only by jobs in that environment.
 - Outputs: `role_arn`, `role_name`, `oidc_provider_arn`.
 
-### `spa-site`
-
-Single-page app hosting: private S3 bucket + CloudFront (OAC), HTTPS, and
-403/404 → `index.html`. Outputs `bucket_name`, `bucket_arn`, `distribution_id`,
-`url`.
-
-### `lambda-function`
+### `lambda`
 
 Lambda with its role, log group (30-day retention), optional inline policy,
 permissions boundary and async retry setting (`async_max_retry_attempts = 0`

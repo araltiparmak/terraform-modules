@@ -95,5 +95,5 @@ terraform.rc
 # Reusable modules: the consuming root module owns the lock file.
 .terraform.lock.hcl
 
-# lambda-function packages
+# lambda packages
 .artifacts/
