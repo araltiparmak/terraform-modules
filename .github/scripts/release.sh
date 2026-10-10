@@ -13,11 +13,6 @@ if [ -z "$marker" ]; then
   exit 0
 fi
 
-if [ -n "$(git tag --points-at "$sha")" ]; then
-  echo "Commit $sha already has a tag. Nothing to do."
-  exit 0
-fi
-
 arg=${marker#\[release }
 arg=${arg%\]}
 
@@ -32,13 +27,21 @@ case "$arg" in
   v*)    next="$arg" ;;
 esac
 
-if git rev-parse -q --verify "refs/tags/$next" >/dev/null; then
-  echo "Tag $next already exists." >&2
-  exit 1
-fi
+# Reuse the version tag on retries of a relative release marker.
+case "$arg" in
+  major|minor|patch)
+    tagged=$(git tag --points-at "$sha" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 || true)
+    next=${tagged:-$next}
+    ;;
+esac
 
 echo "Release $next (previous: $latest)"
 if [ "${DRY_RUN:-0}" = 1 ]; then
+  exit 0
+fi
+
+if gh release view "$next" >/dev/null 2>&1; then
+  echo "Release $next already exists. Nothing to do."
   exit 0
 fi
 

@@ -4,7 +4,7 @@ Reusable Terraform modules. Pin a release tag when you use one:
 
 ```hcl
 module "x" {
-  source = "github.com/araltiparmak/terraform-modules//<module>?ref=v1.3.0"
+  source = "github.com/araltiparmak/terraform-modules//<module>?ref=v2.0.0"
 }
 ```
 
@@ -21,9 +21,10 @@ title or body:
 | `[release major]` | `v2.0.0` |
 | `[release v1.5.0]` | `v1.5.0` |
 
-No marker, no release. Use `major` for breaking changes (renamed module,
-removed variable). The release notes are generated from the merged pull
-requests.
+No marker, no release. Use `[release major]` for breaking changes (renamed
+module, removed variable, higher minimum Terraform or AWS provider version).
+The current Terraform >= 1.9 and AWS provider >= 6.0 requirements need a major
+release (`v2.0.0`). The release notes are generated from the merged pull requests.
 
 ## Modules
 
@@ -40,7 +41,7 @@ public S3 website (v1 behaviour). Two opt-in flags, both need
 
 ```hcl
 module "app" {
-  source = "github.com/araltiparmak/terraform-modules//static-site?ref=v1.3.0"
+  source = "github.com/araltiparmak/terraform-modules//static-site?ref=v2.0.0"
 
   domain_name         = "app.example.com"
   with_cloudfront     = true
