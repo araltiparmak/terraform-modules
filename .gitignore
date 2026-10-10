@@ -92,3 +92,8 @@ terraform.rc
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform,visualstudiocode,macos
+# Reusable modules: the consuming root module owns the lock file.
+.terraform.lock.hcl
+
+# lambda packages
+.artifacts/

@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Read-only token; this workflow never talks to AWS.
+permissions:
+  contents: read
+
+jobs:
+  modules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.15.8"
+      - name: Format check
+        run: terraform fmt -recursive -check
+      - name: Validate and test
+        run: |
+          for m in */; do
+            [ -n "$(ls "$m"*.tf 2>/dev/null)" ] || continue
+            echo "== $m"
+            terraform -chdir="$m" init -backend=false -input=false > /dev/null
+            terraform -chdir="$m" validate -no-color
+            if [ -d "${m}tests" ]; then
+              terraform -chdir="$m" test -no-color
+            fi
+          done
