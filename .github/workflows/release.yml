@@ -1,0 +1,25 @@
+name: Release
+
+# A commit on main that contains [release patch|minor|major|vX.Y.Z] in its
+# message creates the tag and the GitHub release. With squash merges the
+# message is the pull request title and body.
+on:
+  push:
+    branches: [main]
+
+concurrency: release
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Create release when requested
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .github/scripts/release.sh
