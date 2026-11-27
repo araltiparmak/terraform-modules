@@ -78,6 +78,29 @@ module "deploy_dev" {
   protection rules. The role is then usable only by jobs in that environment.
 - Outputs: `role_arn`, `role_name`, `oidc_provider_arn`.
 
+### `github-repo`
+
+GitHub repository settings as code, so you set them once and apply them to
+every repo: squash-only merges, branch deleted after merge, vulnerability
+alerts, a ruleset on the default branch (pull request required, no force push,
+no deletion, optional required checks), read-only workflow token, allowed
+Actions (GitHub-owned and verified creators) and environments.
+
+```hcl
+module "postpilot" {
+  source = "github.com/araltiparmak/terraform-modules//github-repo?ref=v1.4.0"
+
+  name                   = "postpilot"
+  description            = "..."
+  required_status_checks = ["modules"]
+  environments           = ["dev", "prod"]
+}
+```
+
+Keep the list of repositories and the state in a separate repo that calls this
+module with `for_each`. Needs a GitHub token with repository administration
+rights.
+
 ### `lambda`
 
 Lambda with its role, log group (30-day retention), optional inline policy,
